@@ -6,7 +6,7 @@
         const password = document.getElementById("password").value.trim();
 
         if (username === "admin" && password === "1234") {
-            window.location.href = "admin-panel.html"; // مسیر پنل ادمین
+            window.location.href = "./adminpanel/index.html"; // مسیر پنل ادمین
         } else if (username === "user" && password === "1234") {
             window.location.href = "user-panel.html"; // مسیر پنل کاربر
         } else {
