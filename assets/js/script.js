@@ -8,7 +8,7 @@
         if (username === "admin" && password === "1234") {
             window.location.href = "./adminpanel/index.html"; // مسیر پنل ادمین
         } else if (username === "user" && password === "1234") {
-            window.location.href = "user-panel.html"; // مسیر پنل کاربر
+            window.location.href = "./user.html"; // مسیر پنل کاربر
         } else {
             alert("نام کاربری یا رمز عبور اشتباه است!");
         }
