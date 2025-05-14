@@ -21,6 +21,69 @@
     <!-- Custom styles for this template -->
     <link href="css/style.css" rel="stylesheet">
     <link href="css/style-responsive.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+      body {
+        background: #1f2833;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: Arial, sans-serif;
+      }
+  
+      .calculator {
+        background-color: #0b0c10;
+        padding: 20px;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+        width: 300px;
+      }
+  
+      .display {
+        height: 60px;
+        font-size: 28px;
+        text-align: right;
+        padding: 10px 15px;
+        border-radius: 10px;
+        background-color: #c5c6c7;
+        margin-bottom: 20px;
+        color: #000;
+        pointer-events: none;
+      }
+  
+      .btn {
+        width: 100%;
+        height: 60px;
+        font-size: 20px;
+        border-radius: 12px !important;
+      }
+  
+      .btn.operator {
+        background-color: #66fcf1;
+        color: #0b0c10;
+      }
+  
+      .btn.equal {
+        background-color: #45a29e;
+        color: #fff;
+      }
+  
+      .btn.clear {
+        background-color: #ff2e63;
+        color: white;
+      }
+  
+      .btn.backspace {
+        background-color: #6c757d;
+        color: white;
+      }
+  
+      .btn:active {
+        transform: scale(0.95);
+      }
+    </style>
+    
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 tooltipss and media queries -->
     <!--[if lt IE 9]>
@@ -425,566 +488,136 @@
                           <h3>ماشین حساب</h3>
                       </div>
                       <div>
-                         <!-- کد ماشین حساب باید اینجا باشه  -->
-                      </div> 
+                         <!-- کد ماشین حساب   -->
+                         <div class="calculator" dir="ltr">
+                            <div id="display" class="display">0</div>
+                          
+                            <div class="container-fluid">
+                              <div class="row g-2">
+                                <div class="col-3"><button class="btn btn-secondary" onclick="appendNumber('7')">7</button></div>
+                                <div class="col-3"><button class="btn btn-secondary" onclick="appendNumber('8')">8</button></div>
+                                <div class="col-3"><button class="btn btn-secondary" onclick="appendNumber('9')">9</button></div>
+                                <div class="col-3"><button class="btn operator" onclick="appendOperator('/')">÷</button></div>
+                          
+                                <div class="col-3"><button class="btn btn-secondary" onclick="appendNumber('4')">4</button></div>
+                                <div class="col-3"><button class="btn btn-secondary" onclick="appendNumber('5')">5</button></div>
+                                <div class="col-3"><button class="btn btn-secondary" onclick="appendNumber('6')">6</button></div>
+                                <div class="col-3"><button class="btn operator" onclick="appendOperator('*')">×</button></div>
+                          
+                                <div class="col-3"><button class="btn btn-secondary" onclick="appendNumber('1')">1</button></div>
+                                <div class="col-3"><button class="btn btn-secondary" onclick="appendNumber('2')">2</button></div>
+                                <div class="col-3"><button class="btn btn-secondary" onclick="appendNumber('3')">3</button></div>
+                                <div class="col-3"><button class="btn operator" onclick="appendOperator('-')">−</button></div>
+                          
+                                <div class="col-3"><button class="btn btn-secondary" onclick="appendNumber('0')">0</button></div>
+                                <div class="col-3"><button class="btn btn-secondary" onclick="appendDot()">.</button></div>
+                                <div class="col-3"><button class="btn equal" onclick="calculate()">=</button></div>
+                                <div class="col-3"><button class="btn operator" onclick="appendOperator('+')">+</button></div>
+                          
+                                <div class="col-6"><button class="btn backspace" onclick="backspace()">⌫</button></div>
+                                <div class="col-6"><button class="btn clear" onclick="clearDisplay()">C</button></div>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          <script>
+                              const display = document.getElementById('display');
+                              let currentInput = '0';
+                              let lastInput = '';
+                            
+                              function updateDisplay() {
+                                display.innerText = currentInput || '0';
+                              }
+                            
+                              function appendNumber(number) {
+                                if (lastInput === '=') {
+                                  currentInput = '0';
+                                  lastInput = '';
+                                }
+                            
+                                if (currentInput === '0') {
+                                  currentInput = number;
+                                } else {
+                                  currentInput += number;
+                                }
+                            
+                                updateDisplay();
+                              }
+                            
+                              function appendOperator(op) {
+                                if (currentInput === '' && op !== '-') return;
+                            
+                                const lastChar = currentInput.slice(-1);
+                                if (isOperator(lastChar)) {
+                                  currentInput = currentInput.slice(0, -1) + op;
+                                } else {
+                                  currentInput += op;
+                                }
+                            
+                                lastInput = op;
+                                updateDisplay();
+                              }
+                            
+                              function appendDot() {
+                                const parts = currentInput.split(/[\+\-\*\/]/);
+                                const lastPart = parts[parts.length - 1];
+                                if (!lastPart.includes('.')) {
+                                  currentInput += currentInput === '' ? '0.' : '.';
+                                  updateDisplay();
+                                }
+                              }
+                            
+                              function clearDisplay() {
+                                currentInput = '0';
+                                lastInput = '';
+                                updateDisplay();
+                              }
+                            
+                              function backspace() {
+                                if (lastInput === '=') {
+                                  clearDisplay();
+                                  return;
+                                }
+                            
+                                currentInput = currentInput.slice(0, -1);
+                                if (currentInput === '' || currentInput === '-') {
+                                  currentInput = '0';
+                                }
+                                updateDisplay();
+                              }
+                            
+                              function calculate() {
+                                try {
+                                  if (isOperator(currentInput.slice(-1))) {
+                                    currentInput = currentInput.slice(0, -1); // حذف عملگر آخر
+                                  }
+                            
+                                  const result = eval(currentInput);
+                                  currentInput = result.toString();
+                                  lastInput = '=';
+                                  updateDisplay();
+                                } catch {
+                                  display.innerText = 'Error';
+                                  currentInput = '0';
+                                  lastInput = '';
+                                }
+                              }
+                            
+                              function isOperator(char) {
+                                return ['+', '-', '*', '/'].includes(char);
+                              }
+                            
+                              // جلوگیری از وارد کردن دستی با کیبورد
+                              window.addEventListener('keydown', e => e.preventDefault());
+                            </script>
                   </div>
-                  <div class="col-lg-4">
-                      <!--new earning start-->
-                      <div class="panel terques-chart">
-                          <div class="panel-body chart-texture">
-                              <div class="chart">
-                                  <div class="heading">
-                                      <span>جمعه</span>
-                                      <strong>ريال 570000 | 15%</strong>
-                                  </div>
-                                  <div class="sparkline" data-type="line" data-resize="true" data-height="75" data-width="90%" data-line-width="1" data-line-color="#fff" data-spot-color="#fff" data-fill-color="" data-highlight-line-color="#fff" data-spot-radius="4" data-data="[200,135,667,333,526,996,564,123,890,564,455]"></div>
-                              </div>
-                          </div>
-                          <div class="chart-tittle">
-                              <span class="title">ورودی ها</span>
-                              <span class="value">
-                                  <a href="#" class="active">فروش</a>
-                                  |
-                                  <a href="#">بازگشتی</a>
-                                  |
-                                  <a href="#">آنلاین</a>
-                              </span>
-                          </div>
-                      </div>
-                      <!--new earning end-->
+                 
+            </div>
+            </div>
+           
 
-                      <!--total earning start-->
-                      <div class="panel green-chart">
-                          <div class="panel-body">
-                              <div class="chart">
-                                  <div class="heading">
-                                      <span>مهر</span>
-                                      <strong>23 روز | 65%</strong>
-                                  </div>
-                                  <div id="barchart"></div>
-                              </div>
-                          </div>
-                          <div class="chart-tittle">
-                              <span class="title">درآمد کل</span>
-                              <span class="value">ريال, 76،54،678</span>
-                          </div>
-                      </div>
-                      <!--total earning end-->
-                  </div>
-              </div>
-              <div class="row">
-                  <div class="col-lg-4">
-                      <!--user info table start-->
-                      <section class="panel">
-                          <div class="panel-body">
-                              <a href="#" class="task-thumb">
-                                  <img src="img/avatar1.jpg" alt="">
-                              </a>
-                              <div class="task-thumb-details">
-                                  <h1><a href="#">Anjelina Joli</a></h1>
-                                  <p>Senior Architect</p>
-                              </div>
-                          </div>
-                          <table class="table table-hover personal-task">
-                              <tbody>
-                                <tr>
-                                    <td>
-                                        <i class=" icon-tasks"></i>
-                                    </td>
-                                    <td>New Task Issued</td>
-                                    <td> 02</td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <i class="icon-warning-sign"></i>
-                                    </td>
-                                    <td>Task Pending</td>
-                                    <td> 14</td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <i class="icon-envelope"></i>
-                                    </td>
-                                    <td>Inbox</td>
-                                    <td> 45</td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <i class=" icon-bell-alt"></i>
-                                    </td>
-                                    <td>New Notification</td>
-                                    <td> 09</td>
-                                </tr>
-                              </tbody>
-                          </table>
-                      </section>
-                      <!--user info table end-->
-                  </div>
-                  <div class="col-lg-8">
-                      <!--work progress start-->
-                      <section class="panel">
-                          <div class="panel-body progress-panel">
-                              <div class="task-progress">
-                                  <h1>Work Progress</h1>
-                                  <p>Anjelina Joli</p>
-                              </div>
-                              <div class="task-option">
-                                  <select class="styled">
-                                      <option>Anjelina Joli</option>
-                                      <option>Tom Crouse</option>
-                                      <option>Jhon Due</option>
-                                  </select>
-                              </div>
-                          </div>
-                          <table class="table table-hover personal-task">
-                              <tbody>
-                              <tr>
-                                  <td>1</td>
-                                  <td>
-                                      Target Sell
-                                  </td>
-                                  <td>
-                                      <span class="badge bg-important">75%</span>
-                                  </td>
-                                  <td>
-                                    <div id="work-progress1"></div>
-                                  </td>
-                              </tr>
-                              <tr>
-                                  <td>2</td>
-                                  <td>
-                                      Product Delivery
-                                  </td>
-                                  <td>
-                                      <span class="badge bg-success">43%</span>
-                                  </td>
-                                  <td>
-                                      <div id="work-progress2"></div>
-                                  </td>
-                              </tr>
-                              <tr>
-                                  <td>3</td>
-                                  <td>
-                                      Payment Collection
-                                  </td>
-                                  <td>
-                                      <span class="badge bg-info">67%</span>
-                                  </td>
-                                  <td>
-                                      <div id="work-progress3"></div>
-                                  </td>
-                              </tr>
-                              <tr>
-                                  <td>4</td>
-                                  <td>
-                                      Work Progress
-                                  </td>
-                                  <td>
-                                      <span class="badge bg-warning">30%</span>
-                                  </td>
-                                  <td>
-                                      <div id="work-progress4"></div>
-                                  </td>
-                              </tr>
-                              <tr>
-                                  <td>5</td>
-                                  <td>
-                                      Delivery Pending
-                                  </td>
-                                  <td>
-                                      <span class="badge bg-primary">15%</span>
-                                  </td>
-                                  <td>
-                                      <div id="work-progress5"></div>
-                                  </td>
-                              </tr>
-                              </tbody>
-                          </table>
-                      </section>
-                      <!--work progress end-->
-                  </div>
-              </div>
-              <div class="row">
-                  <div class="col-lg-8">
-                      <!--timeline start-->
-                      <section class="panel">
-                          <div class="panel-body">
-                                  <div class="text-center mbot30">
-                                      <h3 class="timeline-title">Timeline</h3>
-                                      <p class="t-info">This is a project timeline</p>
-                                  </div>
-
-                                  <div class="timeline">
-                                      <article class="timeline-item">
-                                          <div class="timeline-desk">
-                                              <div class="panel">
-                                                  <div class="panel-body">
-                                                      <span class="arrow"></span>
-                                                      <span class="timeline-icon red"></span>
-                                                      <span class="timeline-date">08:25 am</span>
-                                                      <h1 class="red">12 July | Sunday</h1>
-                                                      <p>Lorem ipsum dolor sit amet consiquest dio</p>
-                                                  </div>
-                                              </div>
-                                          </div>
-                                      </article>
-                                      <article class="timeline-item alt">
-                                          <div class="timeline-desk">
-                                              <div class="panel">
-                                                  <div class="panel-body">
-                                                      <span class="arrow-alt"></span>
-                                                      <span class="timeline-icon green"></span>
-                                                      <span class="timeline-date">10:00 am</span>
-                                                      <h1 class="green">10 July | Wednesday</h1>
-                                                      <p><a href="#">Jonathan Smith</a> added new milestone <span><a href="#" class="green">ERP</a></span></p>
-                                                  </div>
-                                              </div>
-                                          </div>
-                                      </article>
-                                      <article class="timeline-item">
-                                          <div class="timeline-desk">
-                                              <div class="panel">
-                                                  <div class="panel-body">
-                                                      <span class="arrow"></span>
-                                                      <span class="timeline-icon blue"></span>
-                                                      <span class="timeline-date">11:35 am</span>
-                                                      <h1 class="blue">05 July | Monday</h1>
-                                                      <p><a href="#">Anjelina Joli</a> added new album <span><a href="#" class="blue">PARTY TIME</a></span></p>
-                                                      <div class="album">
-                                                          <a href="#">
-                                                              <img alt="" src="img/sm-img-1.jpg">
-                                                          </a>
-                                                          <a href="#">
-                                                              <img alt="" src="img/sm-img-2.jpg">
-                                                          </a>
-                                                          <a href="#">
-                                                              <img alt="" src="img/sm-img-3.jpg">
-                                                          </a>
-                                                          <a href="#">
-                                                              <img alt="" src="img/sm-img-1.jpg">
-                                                          </a>
-                                                          <a href="#">
-                                                              <img alt="" src="img/sm-img-2.jpg">
-                                                          </a>
-                                                      </div>
-                                                  </div>
-                                              </div>
-                                          </div>
-                                      </article>
-                                      <article class="timeline-item alt">
-                                          <div class="timeline-desk">
-                                              <div class="panel">
-                                                  <div class="panel-body">
-                                                      <span class="arrow-alt"></span>
-                                                      <span class="timeline-icon purple"></span>
-                                                      <span class="timeline-date">3:20 pm</span>
-                                                      <h1 class="purple">29 June | Saturday</h1>
-                                                      <p>Lorem ipsum dolor sit amet consiquest dio</p>
-                                                      <div class="notification">
-                                                          <i class=" icon-exclamation-sign"></i> New task added for <a href="#">Denial Collins</a>
-                                                      </div>
-                                                  </div>
-                                              </div>
-                                          </div>
-                                      </article>
-                                      <article class="timeline-item">
-                                          <div class="timeline-desk">
-                                              <div class="panel">
-                                                  <div class="panel-body">
-                                                      <span class="arrow"></span>
-                                                      <span class="timeline-icon light-green"></span>
-                                                      <span class="timeline-date">07:49 pm</span>
-                                                      <h1 class="light-green">10 June | Friday</h1>
-                                                      <p><a href="#">Jonatha Smith</a> added new milestone <span><a href="#" class="light-green">prank</a></span> Lorem ipsum dolor sit amet consiquest dio</p>
-                                                  </div>
-                                              </div>
-                                          </div>
-                                      </article>
-                                  </div>
-
-                                  <div class="clearfix">&nbsp;</div>
-                              </div>
-                      </section>
-                      <!--timeline end-->
-                  </div>
-                  <div class="col-lg-4">
-                      <!--revenue start-->
-                      <section class="panel">
-                          <div class="revenue-head">
-                              <span>
-                                  <i class="icon-bar-chart"></i>
-                              </span>
-                              <h3>Revenue</h3>
-                              <span class="rev-combo pull-right">
-                                 June 2013
-                              </span>
-                          </div>
-                          <div class="panel-body">
-                              <div class="row">
-                                  <div class="col-lg-6 col-sm-6 text-center">
-                                      <div class="easy-pie-chart">
-                                          <div class="percentage" data-percent="35"><span>35</span>%</div>
-                                      </div>
-                                  </div>
-                                  <div class="col-lg-6 col-sm-6">
-                                      <div class="chart-info chart-position">
-                                          <span class="increase"></span>
-                                          <span>Revenue Increase</span>
-                                      </div>
-                                      <div class="chart-info">
-                                          <span class="decrease"></span>
-                                          <span>Revenue Decrease</span>
-                                      </div>
-                                  </div>
-                              </div>
-                          </div>
-                          <div class="panel-footer revenue-foot">
-                              <ul>
-                                  <li class="first active">
-                                      <a href="javascript:;">
-                                          <i class="icon-bullseye"></i>
-                                          Graphical
-                                      </a>
-                                  </li>
-                                  <li>
-                                      <a href="javascript:;">
-                                          <i class=" icon-th-large"></i>
-                                          Tabular
-                                      </a>
-                                  </li>
-                                  <li class="last">
-                                      <a href="javascript:;">
-                                          <i class=" icon-align-justify"></i>
-                                          Listing
-                                      </a>
-                                  </li>
-                              </ul>
-                          </div>
-                      </section>
-                      <!--revenue end-->
-                      <!--features carousel start-->
-                      <section class="panel">
-                          <div class="flat-carousal">
-                              <div id="owl-demo" class="owl-carousel owl-theme">
-                                  <div class="item">
-                                      <h1>Flatlab is new model of admin dashboard for happy use</h1>
-                                      <div class="text-center">
-                                          <a href="javascript:;" class="view-all">View All</a>
-                                      </div>
-                                  </div>
-                                  <div class="item">
-                                      <h1>Fully responsive and build with Bootstrap 3.0</h1>
-                                      <div class="text-center">
-                                          <a href="javascript:;" class="view-all">View All</a>
-                                      </div>
-                                  </div>
-                                  <div class="item">
-                                      <h1>Responsive Frontend is free if you get this.</h1>
-                                      <div class="text-center">
-                                          <a href="javascript:;" class="view-all">View All</a>
-                                      </div>
-                                  </div>
-                              </div>
-                          </div>
-                          <div class="panel-body">
-                              <ul class="ft-link">
-                                  <li class="active">
-                                      <a href="javascript:;">
-                                          <i class="icon-reorder"></i>
-                                          Sales
-                                      </a>
-                                  </li>
-                                  <li>
-                                      <a href="javascript:;">
-                                          <i class=" icon-calendar-empty"></i>
-                                          promo
-                                      </a>
-                                  </li>
-                                  <li>
-                                      <a href="javascript:;">
-                                          <i class=" icon-camera"></i>
-                                          photo
-                                      </a>
-                                  </li>
-                                  <li>
-                                      <a href="javascript:;">
-                                          <i class=" icon-circle"></i>
-                                          other
-                                      </a>
-                                  </li>
-                              </ul>
-                          </div>
-                      </section>
-                      <!--features carousel end-->
-                  </div>
-              </div>
-              <div class="row">
-                  <div class="col-lg-8">
-                      <!--latest product info start-->
-                      <section class="panel post-wrap pro-box">
-                          <aside>
-                              <div class="post-info">
-                                  <span class="arrow-pro right"></span>
-                                  <div class="panel-body">
-                                      <h1><strong>popular</strong> <br> Brand of this week</h1>
-                                      <div class="desk yellow">
-                                          <h3>Dimond Ring</h3>
-                                          <p>Lorem ipsum dolor set amet lorem ipsum dolor set amet ipsum dolor set amet</p>
-                                      </div>
-                                      <div class="post-btn">
-                                          <a href="javascript:;">
-                                              <i class="icon-chevron-sign-left"></i>
-                                          </a>
-                                          <a href="javascript:;">
-                                              <i class="icon-chevron-sign-right"></i>
-                                          </a>
-                                      </div>
-                                  </div>
-                              </div>
-                          </aside>
-                          <aside class="post-highlight yellow v-align">
-                              <div class="panel-body text-center">
-                                  <div class="pro-thumb">
-                                      <img src="img/ring.jpg" alt="">
-                                  </div>
-                              </div>
-                          </aside>
-                      </section>
-                      <!--latest product info end-->
-                      <!--twitter feedback start-->
-                      <section class="panel post-wrap pro-box">
-                          <aside class="post-highlight terques v-align">
-                              <div class="panel-body">
-                                  <h2>Flatlab is new model of admin dashboard <a href="javascript:;"> http://demo.com/</a> 4 days ago  by jonathan smith</h2>
-                              </div>
-                          </aside>
-                          <aside>
-                              <div class="post-info">
-                                  <span class="arrow-pro left"></span>
-                                  <div class="panel-body">
-                                      <div class="text-center twite">
-                                          <h1>Twitter Feed</h1>
-                                      </div>
-
-                                      <footer class="social-footer">
-                                          <ul>
-                                              <li>
-                                                  <a href="#">
-                                                    <i class="icon-facebook"></i>
-                                                  </a>
-                                              </li>
-                                              <li class="active">
-                                                  <a href="#">
-                                                      <i class="icon-twitter"></i>
-                                                  </a>
-                                              </li>
-                                              <li>
-                                                  <a href="#">
-                                                      <i class="icon-google-plus"></i>
-                                                  </a>
-                                              </li>
-                                              <li>
-                                                  <a href="#">
-                                                      <i class="icon-pinterest"></i>
-                                                  </a>
-                                              </li>
-                                          </ul>
-                                      </footer>
-                                  </div>
-                              </div>
-                          </aside>
-                      </section>
-                      <!--twitter feedback end-->
-                  </div>
-                  <div class="col-lg-4">
-                      <div class="row">
-                          <div class="col-xs-6">
-                              <!--pie chart start-->
-                              <section class="panel">
-                                  <div class="panel-body">
-                                      <div class="chart">
-                                          <div id="pie-chart" ></div>
-                                      </div>
-                                  </div>
-                                  <footer class="pie-foot">
-                                      Free: 260GB
-                                  </footer>
-                              </section>
-                              <!--pie chart start-->
-                          </div>
-                          <div class="col-xs-6">
-                              <!--follower start-->
-                              <section class="panel">
-                                  <div class="follower">
-                                      <div class="panel-body">
-                                          <h4>Jonathan Smith</h4>
-                                          <div class="follow-ava">
-                                              <img src="img/follower-avatar.jpg" alt="">
-                                          </div>
-                                      </div>
-                                  </div>
-
-                                  <footer class="follower-foot">
-                                      <ul>
-                                          <li>
-                                              <h5>2789</h5>
-                                              <p>Follower</p>
-                                          </li>
-                                          <li>
-                                              <h5>270</h5>
-                                              <p>Following</p>
-                                          </li>
-                                      </ul>
-                                  </footer>
-                              </section>
-                              <!--follower end-->
-                          </div>
-                      </div>
-                      <!--weather statement start-->
-                      <section class="panel">
-                          <div class="weather-bg">
-                              <div class="panel-body">
-                                  <div class="row">
-                                      <div class="col-xs-6">
-                                        <i class="icon-cloud"></i>
-                                          California
-                                      </div>
-                                      <div class="col-xs-6">
-                                          <div class="degree">
-                                              24°
-                                          </div>
-                                      </div>
-                                  </div>
-                              </div>
-                          </div>
-
-                          <footer class="weather-category">
-                              <ul>
-                                  <li class="active">
-                                      <h5>humidity</h5>
-                                      56%
-                                  </li>
-                                  <li>
-                                      <h5>precip</h5>
-                                      1.50 in
-                                  </li>
-                                  <li>
-                                      <h5>winds</h5>
-                                      10 mph
-                                  </li>
-                              </ul>
-                          </footer>
-
-                      </section>
-                      <!--weather statement end-->
-                  </div>
-              </div>
-
-          </section>
-      </section>
+      
       <!--main content end-->
-  </section>
-
     <!-- js placed at the end of the document so the pages load faster -->
     <script src="js/jquery.js"></script>
     <script src="js/jquery-1.8.3.min.js"></script>
